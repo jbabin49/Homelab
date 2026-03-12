@@ -102,8 +102,8 @@ Dans Prometheus, la cible OMV doit pointer vers:
 Pour pouvoir exporter les métriques du daemon Docker, il faut modifier le fichier `/etc/docker/daemon.json` et ajouter :
 ```json
 {
-    "metrics_addr" : "0.0.0.0:9323",
-    "experimental" : true
+  "metrics_addr" : "0.0.0.0:9323",
+  "experimental" : true
 }
 ```
 
