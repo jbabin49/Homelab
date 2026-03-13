@@ -12,7 +12,15 @@ Ce dossier contient une stack de monitoring pour Home Assistant:
 - VictoriaMetrics comme stockage long terme via `remote_write`
 - Grafana pour la visualisation
 
-#### Note : les commandes docker compose peuvent être éxécutées soit avec `docker compose` (Docker CLI) soit avec `docker-compose` (binaire séparé) selon la configuration de Home Assistant. Assurez-vous d'utiliser la bonne syntaxe pour votre environnement.
+Contenu principal:
+- `files/HA/docker-compose.yml`: stack Prometheus + VictoriaMetrics + Grafana
+- `files/HA/prometheus.yml`: config de scraping
+- `files/docker-daemon.json`: exemple d'activation des métriques Docker (`:9323`)
+- `dashboards/*.json`: dashboards personnels
+- `dashboards/*.example.json`: dashboards d'exemple anonymisés
+
+#### Note
+Les commandes peuvent être exécutées avec `docker compose` (CLI Docker) ou `docker-compose` (binaire séparé) selon votre environnement Home Assistant.
 
 ## 🏗️ Architecture
 - Home Assistant expose ses metriques sur `/api/prometheus`.
@@ -25,6 +33,25 @@ Ports exposes:
 - Prometheus: `9090`
 - Grafana: `3000`
 - VictoriaMetrics: `8428`
+
+## 📊 Datasource Grafana
+Dans Grafana, vous pouvez ajouter un datasource de type `VictoriaMetrics`.
+
+Les dashboards du dossier `dashboards/` sont maintenant declares pour le plugin
+`victoriametrics-metrics-datasource`.
+
+Si Grafana tourne dans le meme `docker-compose`, n'utilisez pas `localhost` ni l'IP de la machine:
+- URL VictoriaMetrics: `http://victoria-metrics:8428`
+- URL Prometheus si besoin: `http://prometheus:9090`
+
+Pourquoi:
+- `localhost` depuis Grafana pointe vers le conteneur Grafana lui-meme.
+- Le port `9090` correspond a Prometheus.
+- Le port `8428` correspond a VictoriaMetrics.
+
+Si vous configurez le datasource depuis un Grafana qui n'est pas dans ce reseau Docker, alors utilisez l'IP de Home Assistant:
+- VictoriaMetrics: `http://IP_HA:8428`
+- Prometheus: `http://IP_HA:9090`
 
 Fichier principal:
 - `files/HA/docker-compose.yml`
@@ -39,6 +66,10 @@ Config Prometheus:
 ```bash
 docker network create monitoring_net
 ```
+4. Volume Docker externe cree pour la config Prometheus:
+```bash
+docker volume create monitoring_prometheus_config
+```
 
 ## 🚀 Deploiement sur Home Assistant
 ```bash
@@ -46,7 +77,7 @@ mkdir -p /mnt/data/supervisor/monitoring
 cd /mnt/data/supervisor/monitoring
 ```
 
-Copier `docker-compose.yml`, `prometheus.yml` et `init-timescale.sql` si present.
+Copier `docker-compose.yml` et `prometheus.yml`.
 
 Lancer la stack:
 ```bash
@@ -71,7 +102,20 @@ authorization:
 
 dans `files/HA/prometheus.yml` (job `homeassistant`).
 
-## ♻️ Mettre a jour la config Prometheus dans le volume
+## 🧩 Initialiser la config Prometheus dans le volume
+Le service Prometheus monte un volume externe en lecture seule:
+- volume: `monitoring_prometheus_config`
+- chemin dans le conteneur: `/etc/prometheus`
+
+Avant le premier démarrage, injecter `prometheus.yml` dans ce volume:
+```bash
+cd /mnt/data/supervisor/monitoring
+cat prometheus.yml | docker run --rm -i \
+  -v monitoring_prometheus_config:/cfg \
+  alpine:3.20 sh -c 'cat > /cfg/prometheus.yml'
+```
+
+## ♻️ Mettre a jour la config Prometheus
 La config est chargee depuis le volume Docker externe `monitoring_prometheus_config`.
 
 ```bash
@@ -102,12 +146,23 @@ Dans Prometheus, la cible OMV doit pointer vers:
 Pour pouvoir exporter les métriques du daemon Docker, il faut modifier le fichier `/etc/docker/daemon.json` et ajouter :
 ```json
 {
-  "metrics_addr" : "0.0.0.0:9323",
-  "experimental" : true
+  "metrics-addr": "0.0.0.0:9323",
+  "experimental": true
 }
 ```
 
+Exemple prêt à l'emploi dans ce dépôt:
+- `files/docker-daemon.json`
+
 Le port `9323` correspond aux metriques du daemon Docker (optionnel), pas a cAdvisor.
+
+## 📦 Dashboards d'exemple
+Les fichiers `dashboards/*.example.json` sont fournis pour partage/import sans exposer d'informations personnelles.
+
+Points importants:
+- datasource: `${DS_PROMETHEUS}`
+- adresses/IP: anonymisées
+- entités Home Assistant: remplacées par des variables (`$climate_entity`, `$switch_entity`, etc.)
 
 ## 🔎 URLs utiles
 - Prometheus: `http://IP_HA:9090`

@@ -1,2 +1,6 @@
-﻿# Local dashboard with personal entities/choices
+﻿# Local dashboards with personal entities/choices
 prometheus-grafana/dashboards/homelab-overview.json
+prometheus-grafana/dashboards/servers.json
+prometheus-grafana/dashboards/docker.json
+prometheus-grafana/dashboards/homeassistant.json
+prometheus-grafana/dashboards/monitoring.json
