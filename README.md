@@ -48,3 +48,7 @@ Pour faire de la virtualisation et héberger des machines virtuelles pour diffé
 * 16Go de RAM DDR3 1600MHz
 * Port RJ45 10/100/1000Mbps de la CM
 * 1 carte double RJ45 1000Mbps
+
+## 📈 Monitoring
+La stack Prometheus + VictoriaMetrics + Grafana est documentée ici:
+- `prometheus-grafana/README.md`

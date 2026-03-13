@@ -5,6 +5,8 @@ remote_write:
   - url: "http://victoria-metrics:8428/api/v1/write"
 
 scrape_configs:
+  # Home Assistant API metrics.
+  # Remplacer le token ci-dessous par un Long-Lived Access Token HA.
   - job_name: homeassistant
     metrics_path: /api/prometheus
     authorization:
@@ -13,14 +15,28 @@ scrape_configs:
     static_configs:
       - targets: ["host.docker.internal:8123"]
 
+  # Host local Home Assistant (node_exporter / docker daemon / cAdvisor).
+  - job_name: ha_local
+    static_configs:
+      - targets: ["host.docker.internal:9100"]
+
+  - job_name: ha_local_docker
+    static_configs:
+      - targets: ["host.docker.internal:9323"]
+
+  - job_name: ha_local_cadvisor
+    static_configs:
+      - targets: ["host.docker.internal:8080"]
+
+  # Serveurs distants. Adapter les IP selon votre LAN.
   - job_name: rpi_nginxpm
     static_configs:
-      - targets: ["10.0.0.18:9100", "10.0.0.18:9323"]
+      - targets: ["10.0.0.18:9100", "10.0.0.18:9323", "10.0.0.18:8080"]
 
   - job_name: rpi_adguard
     static_configs:
-      - targets: ["10.0.0.129:9100", "10.0.0.129:9323"]
+      - targets: ["10.0.0.129:9100", "10.0.0.129:9323", "10.0.0.129:8080"]
 
   - job_name: omv_nas
     static_configs:
-      - targets: ["10.0.0.52:9100", "10.0.0.52:8080"]
+      - targets: ["10.0.0.52:9100", "10.0.0.52:8080", "10.0.0.52:9323"]
