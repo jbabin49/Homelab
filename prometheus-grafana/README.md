@@ -162,20 +162,20 @@ Le port `9323` correspond aux metriques du daemon Docker (optionnel), pas a cAdv
 Le conteneur Grafana monte le dossier local `files/HA/grafana/provisioning`
 vers `/etc/grafana/provisioning`.
 
-Un squelette local d'alerting peut etre place dans:
+Un squelette local d'alerting peut être place dans:
 - `files/HA/grafana/provisioning/alerting/`
 
-Les fichiers YAML presents dans ce dossier seront charges par Grafana au demarrage.
+Les fichiers YAML présents dans ce dossier seront chargés par Grafana au démarrage.
 
-Flux conseille:
-1. editer les fichiers YAML dans `alerting/`
+Flux conseillé:
+1. éditer les fichiers YAML dans `alerting/`
 2. remplacer les placeholders (UID datasource, email, webhook, etc.)
-3. redemarrer Grafana avec `docker compose restart grafana`
+3. redémarrer Grafana avec `docker compose restart grafana`
 
-Bon a savoir:
-- les dashboards JSON ne suffisent pas pour restaurer les alertes Grafana unifiees
-- les regles, contact points et policies se gerent mieux via provisioning YAML
-- si vous preferez, vous pouvez aussi creer les alertes dans l'UI puis les re-saisir ici pour les versionner ensuite
+Bon à savoir:
+- les dashboards JSON ne suffisent pas pour restaurer les alertes Grafana unifiées
+- les règles, contact points et policies se gèrent mieux via provisioning YAML
+- si vous préférez, vous pouvez aussi créer les alertes dans l'UI puis les re-saisir ici pour les versionner ensuite
 
 ## 📦 Dashboards d'exemple
 Les fichiers `dashboards/*.example.json` sont fournis pour partage/import sans exposer d'informations personnelles.
