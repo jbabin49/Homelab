@@ -1,0 +1,65 @@
+﻿apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: homelab-hosts
+    folder: Homelab Alerts
+    interval: 1m
+    rules:
+      - uid: homelab_cpu_high
+        title: CPU usage high
+        condition: C
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        annotations:
+          summary: CPU usage is above 80% for 5 minutes
+          description: Replace datasourceUid with your Prometheus datasource UID in Grafana.
+        labels:
+          severity: warning
+          source: grafana-provisioning
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: REPLACE_WITH_PROMETHEUS_UID
+            model:
+              editorMode: code
+              expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+              instant: true
+              intervalMs: 1000
+              legendFormat: "{{instance}}"
+              maxDataPoints: 43200
+              range: false
+              refId: A
+
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              thresholds:
+                - color: green
+                  value: 0
+                - color: red
+                  value: 80
+              type: threshold

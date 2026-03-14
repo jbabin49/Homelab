@@ -1,0 +1,22 @@
+﻿apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: homelab-email
+    receivers:
+      - uid: homelab-email
+        type: email
+        settings:
+          addresses: admin@example.com
+          singleEmail: true
+        disableResolveMessage: false
+
+  - orgId: 1
+    name: homelab-webhook
+    receivers:
+      - uid: homelab-webhook
+        type: webhook
+        settings:
+          url: http://example.local/alerts
+          httpMethod: POST
+        disableResolveMessage: false

@@ -1,0 +1,872 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "VictoriaMetrics",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "victoriametrics-metrics-datasource",
+      "pluginName": "VictoriaMetrics"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "10.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "victoriametrics-metrics-datasource",
+      "name": "VictoriaMetrics",
+      "version": "0.23.1"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "title": "Servers",
+      "url": "/d/homelab-servers",
+      "type": "link",
+      "icon": "external link",
+      "tooltip": "",
+      "targetBlank": false
+    },
+    {
+      "title": "Docker",
+      "url": "/d/homelab-docker",
+      "type": "link",
+      "icon": "external link",
+      "tooltip": "",
+      "targetBlank": false
+    },
+    {
+      "title": "Home Assistant",
+      "url": "/d/homelab-homeassistant",
+      "type": "link",
+      "icon": "external link",
+      "tooltip": "",
+      "targetBlank": false
+    },
+    {
+      "title": "Monitoring",
+      "url": "/d/homelab-monitoring",
+      "type": "link",
+      "icon": "external link",
+      "tooltip": "",
+      "targetBlank": false
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "title": "Home Assistant",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "État UP/DOWN de chaque endpoint scrapé",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "up{job=~\"ha_node_exporter|ha_cadvisor|ha_docker|homeassistant\"}",
+          "legendFormat": "{{job}} — {{instance}}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "title": "Endpoints",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Métriques critiques absentes (1 = manquante). Adaptez la liste à votre stack.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Missing"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "A",
+          "expr": "label_replace(absent(node_cpu_seconds_total{job=\"ha_node_exporter\",mode=\"idle\"}), \"missing_metric\", \"node_cpu_seconds_total\", \"\", \"\") or label_replace(absent(node_memory_MemAvailable_bytes{job=\"ha_node_exporter\"}), \"missing_metric\", \"node_memory_MemAvailable_bytes\", \"\", \"\") or label_replace(absent(node_filesystem_avail_bytes{job=\"ha_node_exporter\"}), \"missing_metric\", \"node_filesystem_avail_bytes\", \"\", \"\") or label_replace(absent(node_network_receive_bytes_total{job=\"ha_node_exporter\"}), \"missing_metric\", \"node_network_receive_bytes_total\", \"\", \"\") or label_replace(absent(container_last_seen{job=\"ha_cadvisor\"}), \"missing_metric\", \"container_last_seen\", \"\", \"\") or label_replace(absent(container_cpu_usage_seconds_total{job=\"ha_cadvisor\"}), \"missing_metric\", \"container_cpu_usage_seconds_total\", \"\", \"\") or label_replace(absent(container_memory_working_set_bytes{job=\"ha_cadvisor\"}), \"missing_metric\", \"container_memory_working_set_bytes\", \"\", \"\") or label_replace(absent(homeassistant_climate_current_temperature_celsius{job=\"homeassistant\"}), \"missing_metric\", \"ha_climate_temperature\", \"\", \"\") or label_replace(absent(homeassistant_switch_state{job=\"homeassistant\"}), \"missing_metric\", \"ha_switch_state\", \"\", \"\") or label_replace(absent(homeassistant_sensor_energy_kwh{job=\"homeassistant\"}), \"missing_metric\", \"ha_sensor_energy_kwh\", \"\", \"\")"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "job": true,
+              "instance": true
+            },
+            "indexByName": {
+              "missing_metric": 0,
+              "Value": 1
+            },
+            "renameByName": {
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "title": "Métriques manquantes",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "title": "Server 1 (10.0.0.X1)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "État UP/DOWN de chaque endpoint scrapé",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "up{job=\"server1\"}",
+          "legendFormat": "{{job}} — {{instance}}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "title": "Endpoints",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Métriques critiques absentes (1 = manquante). Adaptez la liste à votre stack.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Missing"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "id": 6,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "A",
+          "expr": "label_replace(absent(node_cpu_seconds_total{job=\"server1\",mode=\"idle\"}), \"missing_metric\", \"node_cpu_seconds_total\", \"\", \"\") or label_replace(absent(node_memory_MemAvailable_bytes{job=\"server1\"}), \"missing_metric\", \"node_memory_MemAvailable_bytes\", \"\", \"\") or label_replace(absent(node_filesystem_avail_bytes{job=\"server1\"}), \"missing_metric\", \"node_filesystem_avail_bytes\", \"\", \"\") or label_replace(absent(node_network_receive_bytes_total{job=\"server1\"}), \"missing_metric\", \"node_network_receive_bytes_total\", \"\", \"\") or label_replace(absent(container_last_seen{job=\"server1\"}), \"missing_metric\", \"container_last_seen\", \"\", \"\") or label_replace(absent(container_cpu_usage_seconds_total{job=\"server1\"}), \"missing_metric\", \"container_cpu_usage_seconds_total\", \"\", \"\") or label_replace(absent(container_memory_working_set_bytes{job=\"server1\"}), \"missing_metric\", \"container_memory_working_set_bytes\", \"\", \"\")"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "job": true,
+              "instance": true
+            },
+            "indexByName": {
+              "missing_metric": 0,
+              "Value": 1
+            },
+            "renameByName": {
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "title": "Métriques manquantes",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 7,
+      "title": "Server 2 (10.0.0.X2)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "État UP/DOWN de chaque endpoint scrapé",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "up{job=\"server2\"}",
+          "legendFormat": "{{job}} — {{instance}}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "title": "Endpoints",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Métriques critiques absentes (1 = manquante). Adaptez la liste à votre stack.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Missing"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 17
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "A",
+          "expr": "label_replace(absent(node_cpu_seconds_total{job=\"server2\",mode=\"idle\"}), \"missing_metric\", \"node_cpu_seconds_total\", \"\", \"\") or label_replace(absent(node_memory_MemAvailable_bytes{job=\"server2\"}), \"missing_metric\", \"node_memory_MemAvailable_bytes\", \"\", \"\") or label_replace(absent(node_filesystem_avail_bytes{job=\"server2\"}), \"missing_metric\", \"node_filesystem_avail_bytes\", \"\", \"\") or label_replace(absent(node_network_receive_bytes_total{job=\"server2\"}), \"missing_metric\", \"node_network_receive_bytes_total\", \"\", \"\") or label_replace(absent(container_last_seen{job=\"server2\"}), \"missing_metric\", \"container_last_seen\", \"\", \"\") or label_replace(absent(container_cpu_usage_seconds_total{job=\"server2\"}), \"missing_metric\", \"container_cpu_usage_seconds_total\", \"\", \"\") or label_replace(absent(container_memory_working_set_bytes{job=\"server2\"}), \"missing_metric\", \"container_memory_working_set_bytes\", \"\", \"\")"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "job": true,
+              "instance": true
+            },
+            "indexByName": {
+              "missing_metric": 0,
+              "Value": 1
+            },
+            "renameByName": {
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "title": "Métriques manquantes",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 10,
+      "title": "Server 3 (10.0.0.X3)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "État UP/DOWN de chaque endpoint scrapé",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "red",
+                  "index": 0,
+                  "text": "DOWN"
+                },
+                "1": {
+                  "color": "green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 25
+      },
+      "id": 11,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value_and_name"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "up{job=\"server3\"}",
+          "legendFormat": "{{job}} — {{instance}}",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "title": "Endpoints",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Métriques critiques absentes (1 = manquante). Adaptez la liste à votre stack.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "green",
+                  "index": 0,
+                  "text": "OK"
+                },
+                "1": {
+                  "color": "red",
+                  "index": 1,
+                  "text": "Missing"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 25
+      },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "refId": "A",
+          "expr": "label_replace(absent(node_cpu_seconds_total{job=\"server3\",mode=\"idle\"}), \"missing_metric\", \"node_cpu_seconds_total\", \"\", \"\") or label_replace(absent(node_memory_MemAvailable_bytes{job=\"server3\"}), \"missing_metric\", \"node_memory_MemAvailable_bytes\", \"\", \"\") or label_replace(absent(node_filesystem_avail_bytes{job=\"server3\"}), \"missing_metric\", \"node_filesystem_avail_bytes\", \"\", \"\") or label_replace(absent(node_network_receive_bytes_total{job=\"server3\"}), \"missing_metric\", \"node_network_receive_bytes_total\", \"\", \"\") or label_replace(absent(container_last_seen{job=\"server3\"}), \"missing_metric\", \"container_last_seen\", \"\", \"\") or label_replace(absent(container_cpu_usage_seconds_total{job=\"server3\"}), \"missing_metric\", \"container_cpu_usage_seconds_total\", \"\", \"\") or label_replace(absent(container_memory_working_set_bytes{job=\"server3\"}), \"missing_metric\", \"container_memory_working_set_bytes\", \"\", \"\")"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "job": true,
+              "instance": true
+            },
+            "indexByName": {
+              "missing_metric": 0,
+              "Value": 1
+            },
+            "renameByName": {
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "title": "Métriques manquantes",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [
+    "homelab",
+    "monitoring"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "VictoriaMetrics",
+          "value": "VictoriaMetrics"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Datasource",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "victoriametrics-metrics-datasource",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Monitoring",
+  "uid": "homelab-monitoring",
+  "version": 1,
+  "weekStart": ""
+}
