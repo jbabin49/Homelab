@@ -159,7 +159,7 @@ Exemple prêt à l'emploi dans ce dépôt:
 Le port `9323` correspond aux metriques du daemon Docker (optionnel), pas a cAdvisor.
 
 ## 🚨 Alertes Grafana provisionnees
-Le conteneur Grafana monte maintenant le dossier local `files/HA/grafana/provisioning`
+Le conteneur Grafana monte le dossier local `files/HA/grafana/provisioning`
 vers `/etc/grafana/provisioning`.
 
 Un squelette local d'alerting peut etre place dans:
