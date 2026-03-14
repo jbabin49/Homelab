@@ -31,7 +31,7 @@ flowchart LR
 ```
 
 ## Procedure (ordre recommande)
-1. Copier ce dossier `release/` sur la machine qui heberge Prometheus/Grafana.
+1. Telecharger la release GitHub, puis extraire le contenu sur la machine qui heberge Prometheus/Grafana.
 2. Editer `stack-server/prometheus/prometheus.yml` pour ajuster les IP de vos noeuds.
 3. Sur chaque noeud a superviser, deployer `stack-nodes/docker-compose-node-observability.yml`:
    - `docker compose -f docker-compose-node-observability.yml up -d`

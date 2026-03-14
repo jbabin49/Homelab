@@ -29,7 +29,7 @@
 
 ### 💾 [![ThinkCentre M75e](https://img.shields.io/badge/ThinkCentre%20M75e-41BDF5?logo=lenovo&logoColor=white)](https://www.lenovo.com/)
 * OpenMediaVault (OMV) pour gérer le stockage en réseau (NAS) avec deux disques Seagate Constellation ES.3 de 3To en RAID1 pour la redondance des données
-* Plex Media Server (conteneur Docker) pour gérer et diffuser ma bibliothèque de médias (films, séries, musique) sur mes différents appareils
+* Plex Media Server (conteneur Docker) pour gérer et diffuser ma bibliothèque de médias sur mes différents appareils
 * Btop (conteneur Docker) pour avoir un visuel rapide des ressources du NAS (CPU, RAM, Disque, Réseau)
 
 ### 🧩 [![Raspberry Pi](https://img.shields.io/badge/Raspberry%20Pi-A22082?logo=raspberrypi&logoColor=white)](https://www.raspberrypi.org/)
@@ -51,4 +51,5 @@ Pour faire de la virtualisation et héberger des machines virtuelles pour diffé
 
 ## 📈 Monitoring
 La stack Prometheus + VictoriaMetrics + Grafana est documentée ici:
-- `prometheus-grafana/README.md`
+- [Documentation de l'installation et de la configuration](https://github.com/jbabin49/Homelab/tree/main/prometheus-grafana)
+- [La release prometheus-grafana-v1.0.0](https://github.com/jbabin49/Homelab/releases/tag/prometheus-grafana-release-v1.0.0)

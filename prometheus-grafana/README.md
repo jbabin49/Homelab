@@ -15,6 +15,7 @@ Ce dossier contient une stack de monitoring pour Home Assistant:
 Contenu principal:
 - `files/HA/docker-compose.yml`: stack Prometheus + VictoriaMetrics + Grafana
 - `files/HA/prometheus.yml`: config de scraping
+- `files/HA/grafana/provisioning/`: provisioning Grafana (datasources, alertes, etc.)
 - `files/docker-daemon.json`: exemple d'activation des métriques Docker (`:9323`)
 - `dashboards/*.json`: dashboards personnels
 - `dashboards/*.example.json`: dashboards d'exemple anonymisés
@@ -77,7 +78,7 @@ mkdir -p /mnt/data/supervisor/monitoring
 cd /mnt/data/supervisor/monitoring
 ```
 
-Copier `docker-compose.yml` et `prometheus.yml`.
+Copier `docker-compose.yml`, `prometheus.yml` et le dossier `grafana/provisioning`.
 
 Lancer la stack:
 ```bash
@@ -155,6 +156,25 @@ Exemple prêt à l'emploi dans ce dépôt:
 - `files/docker-daemon.json`
 
 Le port `9323` correspond aux metriques du daemon Docker (optionnel), pas a cAdvisor.
+
+## 🚨 Alertes Grafana provisionnees
+Le conteneur Grafana monte maintenant le dossier local `files/HA/grafana/provisioning`
+vers `/etc/grafana/provisioning`.
+
+Un squelette local d'alerting peut etre place dans:
+- `files/HA/grafana/provisioning/alerting/`
+
+Les fichiers YAML presents dans ce dossier seront charges par Grafana au demarrage.
+
+Flux conseille:
+1. editer les fichiers YAML dans `alerting/`
+2. remplacer les placeholders (UID datasource, email, webhook, etc.)
+3. redemarrer Grafana avec `docker compose restart grafana`
+
+Bon a savoir:
+- les dashboards JSON ne suffisent pas pour restaurer les alertes Grafana unifiees
+- les regles, contact points et policies se gerent mieux via provisioning YAML
+- si vous preferez, vous pouvez aussi creer les alertes dans l'UI puis les re-saisir ici pour les versionner ensuite
 
 ## 📦 Dashboards d'exemple
 Les fichiers `dashboards/*.example.json` sont fournis pour partage/import sans exposer d'informations personnelles.
