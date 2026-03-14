@@ -4,3 +4,8 @@ prometheus-grafana/dashboards/servers.json
 prometheus-grafana/dashboards/docker.json
 prometheus-grafana/dashboards/homeassistant.json
 prometheus-grafana/dashboards/monitoring.json
+
+# Local Grafana provisioning (HA)
+prometheus-grafana/files/HA/grafana/provisioning/
+prometheus-grafana/files/HA/grafana/provisioning/alerting/
+prometheus-grafana/files/HA/grafana/provisioning/datasources/
