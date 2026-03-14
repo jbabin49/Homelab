@@ -121,6 +121,7 @@ La config est chargee depuis le volume Docker externe `monitoring_prometheus_con
 
 ```bash
 cd /mnt/data/supervisor/monitoring
+# Pour injecter la config dans le volume de Prometheus, utilisez la commande suivante:
 cat prometheus.yml | docker run --rm -i \
   -v monitoring_prometheus_config:/cfg \
   alpine:3.20 sh -c 'cat > /cfg/prometheus.yml'
