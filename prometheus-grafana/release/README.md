@@ -1,11 +1,11 @@
 ﻿# Monitoring release package (Prometheus + Grafana)
 
-Ce dossier est une base anonymisee et publiable pour une release.
+Ce dossier est une base anonymisee pour une stack de monitoring avec Prometheus et Grafana. Il contient des exemples de configuration pour le scraping, le stockage, la visualisation des métriques avec des dashboards et des alertes.
 
 Contenu:
 - `stack-server/docker-compose.yml`: stack serveur de monitoring (Prometheus + Grafana)
 - `stack-server/prometheus/prometheus.yml`: cibles d'exemple anonymisees
-- `stack-server/grafana/provisioning/alerting/*.yaml`: exemples de regles/notifications Grafana
+- `stack-server/grafana/provisioning/alerting/*.yaml`: exemples de regles d'alertes/notifications Grafana
 - `stack-nodes/docker-compose-node-observability.yml`: compose dedie aux noeuds (node_exporter + cadvisor)
 - `dashboards/*.example.json`: dashboards d'exemple
 
