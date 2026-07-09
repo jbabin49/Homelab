@@ -16,6 +16,8 @@
   <img src="https://img.shields.io/badge/Web%20server-Nginx-009639?logo=nginx&logoColor=white" alt="Web server">
   <img src="https://img.shields.io/badge/Auth-Authelia-113155?logo=authelia&logoColor=white" alt="Auth">
   <img src="https://img.shields.io/badge/VPN-Wireguard-88171A?logo=wireguard&logoColor=white" alt="VPN">
+  <img src="https://img.shields.io/badge/Bastion-Apache%20Guacamole-578068?logo=apache&logoColor=white" alt="Bastion">
+  <img src="https://img.shields.io/badge/CDN%2FTLS-Cloudflare-F38020?logo=cloudflare&logoColor=white" alt="Cloudflare">
   <img src="https://img.shields.io/badge/Media-Plex-E5A00D?logo=plex&logoColor=white" alt="Plex">
   <img src="https://img.shields.io/badge/OS-Linux-FCC624?logo=linux&logoColor=black" alt="Linux">
   <img src="https://img.shields.io/badge/FOSS-100%25%20Open%20Source-brightgreen?logo=opensourceinitiative&logoColor=white" alt="FOSS">
@@ -48,6 +50,17 @@ Pour faire de la virtualisation et héberger des machines virtuelles pour diffé
 * 16Go de RAM DDR3 1600MHz
 * Port RJ45 10/100/1000Mbps de la CM
 * 1 carte double RJ45 1000Mbps
+
+### ☁️ [![OVH VPS](https://img.shields.io/badge/OVH-VPS-123F6D?logo=ovh&logoColor=white)](https://www.ovhcloud.com/)
+Un VPS sous Debian sert de **bastion d'administration à distance** pour accéder à mon homelab depuis l'extérieur de façon sécurisée :
+* Apache Guacamole (conteneurs Docker) pour l'accès web SSH / RDP / VNC à mes machines, sans client lourd
+* Client WireGuard vers le wg-easy de la maison : le VPS rejoint le LAN sans ouvrir aucun port entrant côté maison
+* Nginx reverse proxy derrière Cloudflare (Full strict + Authenticated Origin Pulls + Cloudflare Access)
+* Stack Docker durcie (réseaux `internal`, secrets, `cap_drop`, `read_only`, images pinnées) et hardening de l'hôte (SSH par clé, UFW, Fail2ban)
+
+## 🔐 Bastion / accès distant
+La stack complète du bastion (Guacamole + WireGuard + Nginx/Cloudflare) est documentée ici :
+- [Documentation et déploiement du bastion](https://github.com/jbabin49/Homelab/tree/main/bastion-vps)
 
 ## 📈 Monitoring
 La stack Prometheus + VictoriaMetrics + Grafana est documentée ici:

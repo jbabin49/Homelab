@@ -1,0 +1,111 @@
+# Toutes les versions sont explicites (pas de latest) pour le contrôle de version
+# Les secrets sont dans des fichiers texte dans un répertoire durci
+services:
+  guacamole-db:
+    image: postgres:16.6-alpine
+    container_name: guacamole-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: guacamole_db
+      POSTGRES_USER: guacamole
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    networks:
+      - backend
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL # On retire toutes les permissions
+    cap_add:
+      - CHOWN # Pour que postgres puissent s'approprier le volume de la DB
+      - DAC_OVERRIDE # Ignorer les bits de permissions rwx pour les fichiers d'init
+      - FOWNER # Pour agir sur le data directory pour sécuriser les fichiers de la base
+      - SETGID # Changer de groupe pour passer de root à postgres
+      - SETUID # Changer d'utiisateur pour passer de root à postgres
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U guacamole -d guacamole_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 512m
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  guacd:
+    image: guacamole/guacd:1.5.5
+    container_name: guacd
+    restart: unless-stopped
+    networks:
+      - guacd-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    mem_limit: 512m
+    pids_limit: 200
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  guacamole:
+    image: guacamole/guacamole:1.5.5
+    container_name: guacamole
+    restart: unless-stopped
+    depends_on:
+      guacamole-db:
+        condition: service_healthy
+      guacd:
+        condition: service_started
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: guacamole-db
+      POSTGRESQL_DATABASE: guacamole_db
+      POSTGRESQL_USER: guacamole
+      POSTGRESQL_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRESQL_AUTO_CREATE_ACCOUNTS: "false"
+      # Template du thème sombre
+      GUACAMOLE_HOME: /etc/guacamole
+      # TOTP pour l'authentification
+      TOTP_ENABLED: "true"
+      TOTP_ISSUER: "Bastion Guacamole"
+    secrets:
+      - db_password
+    volumes:
+      - ./guacamole-home:/etc/guacamole:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - backend
+      - guacd-net
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 1g
+    pids_limit: 300
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+networks:
+  backend:
+    internal: true
+  guacd-net:
+    driver: bridge
