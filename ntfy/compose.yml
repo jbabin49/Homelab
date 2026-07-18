@@ -1,0 +1,21 @@
+﻿services:
+  ntfy:
+    image: binwiederhier/ntfy:v2.11.0
+    container_name: ntfy
+    restart: unless-stopped
+    command: serve
+    ports:
+      - "8090:80"
+    volumes:
+      - ./config:/etc/ntfy
+      - ./data:/var/lib/ntfy
+      - ./cache:/var/cache/ntfy
+    environment:
+      TZ: "Europe/Paris"
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 256m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

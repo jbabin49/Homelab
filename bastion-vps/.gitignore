@@ -1,0 +1,26 @@
+# Secrets — ne JAMAIS committer
+secrets/*
+!secrets/*.example
+*.key
+*_password*
+db_password.txt
+
+# Données runtime Guacamole
+db-data/
+initdb/init.sql
+
+# Extension de thème générée par theme/build.sh (à reconstruire au déploiement)
+guacamole-home/
+
+# Clés WireGuard / SSH
+*.conf
+!*.example.conf
+!nginx-bastion.conf
+private.key
+public.key
+wg*.conf
+!wg0.example.conf
+
+# Divers
+*.log
+.env

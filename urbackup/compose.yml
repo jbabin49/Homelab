@@ -1,0 +1,21 @@
+﻿services:
+  urbackup:
+    image: uroni/urbackup-server:latest
+    container_name: urbackup
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - <CHANGE_ME_URBACKUP_PATH>/backups:/backups
+      - <CHANGE_ME_URBACKUP_PATH>/data:/var/urbackup
+      - /usr/bin/curl:/usr/bin/curl:ro
+    environment:
+      - PUID=1000
+      - PGID=100
+      - TZ=Europe/Paris
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 1.5
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }

@@ -1,0 +1,30 @@
+// Mises à jour automatiques — correctifs de sécurité Debian uniquement.
+// Debug : unattended-upgrades -d  (log : /var/log/unattended-upgrades/)
+
+Unattended-Upgrade::Origins-Pattern {
+        "origin=Debian,codename=${distro_codename},label=Debian-Security";
+        "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
+};
+
+// Aucun paquet exclu des mises à jour.
+Unattended-Upgrade::Package-Blacklist {
+};
+
+// Reprendre proprement si dpkg a été interrompu.
+Unattended-Upgrade::AutoFixInterruptedDpkg "true";
+
+// Découper l'upgrade en petites étapes (interruptible à l'arrêt).
+Unattended-Upgrade::MinimalSteps "true";
+
+// Purger les vieux kernels et dépendances devenus inutiles.
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+
+// Redémarrer automatiquement si un update l'exige (ex: nouveau kernel), à 4h.
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "04:00";
+
+// Notification e-mail en cas d'erreur (nécessite un MTA + bsd-mailx).
+// Décommenter et renseigner une adresse si tu veux être alerté.
+//Unattended-Upgrade::Mail "admin@example.com";
+//Unattended-Upgrade::MailReport "only-on-error";

@@ -1,0 +1,46 @@
+# AdGuard Home — Configuration exemple
+# Emplacement réel : /opt/AdGuardHome/AdGuardHome.yaml
+# Documentation : https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration
+#
+# Ce fichier est un EXEMPLE simplifié. Ne jamais committer le fichier réel
+# (il contient le hash du mot de passe admin et les paramètres réseau).
+
+http:
+  pprof:
+    port: 6060
+    enabled: false
+  address: 0.0.0.0:80
+  session_ttl: 720h
+
+users:
+  - name: CHANGE_ME_ADMIN_USER
+    password: CHANGE_ME_BCRYPT_HASH
+
+dns:
+  bind_hosts:
+    - 0.0.0.0
+  port: 53
+  # Upstream DNS (Quad9 + Cloudflare en fallback)
+  upstream_dns:
+    - https://dns.quad9.net/dns-query
+    - https://cloudflare-dns.com/dns-query
+  bootstrap_dns:
+    - 9.9.9.9
+    - 1.1.1.1
+  # Réécriture *.home.lab vers le ThinkCentre (reverse proxy)
+  rewrites:
+    - domain: '*.home.lab'
+      answer: CHANGE_ME_THINKCENTRE_IP
+
+filtering:
+  enabled: true
+  url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
+  # Listes additionnelles à ajouter selon les besoins
+
+querylog:
+  enabled: true
+  interval: 168h  # 7 jours
+
+statistics:
+  enabled: true
+  interval: 720h  # 30 jours

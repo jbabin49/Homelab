@@ -1,0 +1,59 @@
+; Gitea — Configuration exemple
+; Documentation : https://docs.gitea.com/administration/config-cheat-sheet
+;
+; Ce fichier est un EXEMPLE. Ne jamais committer le vrai app.ini
+; (il contient les secrets de session et SMTP).
+;
+; Emplacement réel : /mnt/nas/gitea/gitea/conf/app.ini
+
+APP_NAME = Gitea — Homelab
+RUN_USER = gitea
+RUN_MODE = prod
+WORK_PATH = /mnt/nas/gitea/gitea
+
+[server]
+HTTP_PORT        = 3000
+ROOT_URL         = http://gitea.home.lab:3000/
+DOMAIN           = gitea.home.lab
+SSH_DOMAIN       = gitea.home.lab
+SSH_PORT         = 2222
+START_SSH_SERVER = true
+LFS_START_SERVER = false
+OFFLINE_MODE     = true
+
+[database]
+DB_TYPE = sqlite3
+PATH    = /mnt/nas/gitea/gitea/gitea.db
+
+[repository]
+ROOT = /mnt/nas/gitea/gitea/repositories
+
+[log]
+MODE      = console
+LEVEL     = info
+ROOT_PATH = /mnt/nas/gitea/log
+
+[security]
+INSTALL_LOCK                  = true
+SECRET_KEY                    = CHANGE_ME_SECRET_KEY
+INTERNAL_TOKEN                = CHANGE_ME_INTERNAL_TOKEN
+PASSWORD_HASH_ALGO            = argon2
+
+[service]
+DISABLE_REGISTRATION          = true
+REQUIRE_SIGNIN_VIEW           = true
+ENABLE_NOTIFY_MAIL            = false
+
+[mailer]
+ENABLED = false
+
+[session]
+PROVIDER = file
+
+[picture]
+DISABLE_GRAVATAR        = true
+ENABLE_FEDERATED_AVATAR = false
+
+[openid]
+ENABLE_OPENID_SIGNIN = false
+ENABLE_OPENID_SIGNUP = false

@@ -1,0 +1,9 @@
+[Unit]
+Description=AdGuard Home — check ntfy horaire
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/scripts/adguard-ntfy.sh check
+User=root

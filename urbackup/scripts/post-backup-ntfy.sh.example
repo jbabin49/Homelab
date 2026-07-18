@@ -1,0 +1,49 @@
+#!/bin/bash
+# UrBackup — Script post-backup → notification ntfy
+# Emplacement réel : /var/urbackup/ (monté depuis le volume Docker)
+#
+# UrBackup fournit les variables d'environnement suivantes :
+#   CLIENTNAME     — nom du client sauvegardé
+#   BACKUP_TYPE    — incr_file | full_file | incr_image | full_image
+#   BACKUP_SUCCESS — 1 (succès) ou 0 (échec)
+#   BACKUP_ELAPSED — durée en secondes
+#
+# Copier ce fichier pour chaque type de backup :
+#   post_incr_filebackup  → backups fichiers incrémentaux
+#   post_full_filebackup  → backups fichiers complets
+#   post_incr_imagebackup → backups image incrémentaux
+#   post_full_imagebackup → backups image complets
+#
+# Prérequis : curl monté en read-only dans le conteneur UrBackup
+#   volumes:
+#     - /usr/bin/curl:/usr/bin/curl:ro
+
+NTFY_URL="https://ntfy.CHANGE_ME_DOMAIN/urbackup"
+NTFY_TOKEN="CHANGE_ME_TOKEN"
+
+CLIENT="$CLIENTNAME"
+TYPE="$BACKUP_TYPE"
+STATUS="$BACKUP_SUCCESS"
+ELAPSED="$BACKUP_ELAPSED"
+
+if [ "$STATUS" = "1" ]; then
+    TITLE="✅ Backup réussi — $CLIENT"
+    PRIORITY="2"
+    TAGS="white_check_mark"
+    MESSAGE="**Client :** $CLIENT\n**Type :** $TYPE\n**Durée :** ${ELAPSED}s"
+else
+    TITLE="🔴 Backup échoué — $CLIENT"
+    PRIORITY="5"
+    TAGS="rotating_light"
+    MESSAGE="**Client :** $CLIENT\n**Type :** $TYPE\n**Erreur :** vérifier l'interface UrBackup"
+fi
+
+printf "$MESSAGE" | curl -s \
+    -H "Authorization: Bearer $NTFY_TOKEN" \
+    -H "Title: $TITLE" \
+    -H "Priority: $PRIORITY" \
+    -H "Tags: $TAGS" \
+    -H "Markdown: yes" \
+    -H "Actions: view, UrBackup, https://urbackup.home.lab" \
+    -d @- \
+    "$NTFY_URL"

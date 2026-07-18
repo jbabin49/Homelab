@@ -1,0 +1,10 @@
+# ntfy — configuration serveur
+# Copier en server.yml et adapter.
+
+base-url: https://ntfy.<CHANGE_ME_DOMAIN>
+listen-http: ":80"
+cache-file: /var/cache/ntfy/cache.db
+auth-file: /var/lib/ntfy/user.db
+auth-default-access: deny-all
+behind-proxy: true
+attachment-cache-dir: /var/cache/ntfy/attachments

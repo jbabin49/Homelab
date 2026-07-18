@@ -1,0 +1,145 @@
+﻿services:
+  zabbix-postgres:
+    image: timescale/timescaledb:2.18.0-pg16
+    container_name: zabbix-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - zabbix_internal
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U zabbix -d zabbix"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    mem_limit: 1g
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:alpine-7.0-latest
+    container_name: zabbix-server
+    restart: unless-stopped
+    depends_on:
+      zabbix-postgres:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST: zabbix-postgres
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      ZBX_ENABLE_SNMP_TRAPS: "true"
+    secrets:
+      - db_password
+    ports:
+      - "10051:10051"
+    networks:
+      - zabbix_internal
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest
+    container_name: zabbix-web
+    restart: unless-stopped
+    depends_on:
+      zabbix-server:
+        condition: service_started
+      zabbix-postgres:
+        condition: service_healthy
+    environment:
+      DB_SERVER_HOST: zabbix-postgres
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      ZBX_SERVER_HOST: zabbix-server
+      PHP_TZ: Europe/Paris
+    secrets:
+      - db_password
+    expose:
+      - 8080
+    networks:
+      - zabbix_internal
+      - proxy_net
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  zabbix-agent2:
+    image: zabbix/zabbix-agent2:alpine-7.0-latest
+    container_name: zabbix-agent2
+    restart: unless-stopped
+    privileged: true
+    pid: host
+    environment:
+      ZBX_HOSTNAME: thinkcentrem73
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_ACTIVE_ALLOW: "false"
+    volumes:
+      - /:/host/root:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - zabbix_internal
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  zabbix-grafana:
+    image: grafana/grafana:11.6.0
+    container_name: zabbix-grafana
+    restart: unless-stopped
+    depends_on:
+      zabbix-postgres:
+        condition: service_healthy
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_password
+      GF_SERVER_ROOT_URL: https://grafana.home.lab
+    secrets:
+      - grafana_password
+    volumes:
+      - grafana_data:/var/lib/grafana
+    expose:
+      - 3000
+    networks:
+      - zabbix_internal
+      - proxy_net
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  grafana_password:
+    file: ./secrets/grafana_password.txt
+
+networks:
+  zabbix_internal:
+    driver: bridge
+  proxy_net:
+    external: true
+
+volumes:
+  pgdata:
+  grafana_data:

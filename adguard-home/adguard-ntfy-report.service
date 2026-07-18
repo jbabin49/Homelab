@@ -1,0 +1,9 @@
+[Unit]
+Description=AdGuard Home — rapport quotidien ntfy
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/scripts/adguard-ntfy.sh report
+User=root

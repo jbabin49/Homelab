@@ -1,0 +1,18 @@
+[Unit]
+Description=Authelia log monitor → ntfy notifications
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=simple
+ExecStart=/opt/scripts/authelia-ntfy.sh
+Restart=on-failure
+RestartSec=30
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

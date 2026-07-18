@@ -1,0 +1,19 @@
+# Le repo ne contient que des fichiers d'exemple (.example) et de la doc.
+# On ignore seulement les données/artefacts générés après déploiement.
+
+# Données runtime (jamais committées)
+*/data/
+*/cache/
+*/letsencrypt/
+*/pgdata/
+*/grafana_data/
+*/backups/
+*/wireguard/
+
+# Secrets réels & environnement (le repo n'utilise que des modèles .example)
+.env
+*.key
+*.sqlite3
+
+# Divers
+*.log

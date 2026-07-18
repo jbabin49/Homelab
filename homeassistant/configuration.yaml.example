@@ -1,0 +1,80 @@
+# Home Assistant — configuration d'exemple
+# Copier en configuration.yaml et remplacer tous les <CHANGE_ME_*>
+# Les secrets doivent être dans secrets.yaml (jamais en dur ici)
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - <CHANGE_ME_NPM_IP>
+    - 172.30.33.0
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+my:
+
+# ── Templates ────────────────────────────────────────────────────
+template:
+  - sensor:
+      - name: Lune
+        state: >-
+          {% set phases = {'first_quarter': 'Premier quartier', 'full_moon': 'Pleine lune',
+                           'last_quarter': 'Dernier quartier', 'new_moon': 'Nouvelle lune',
+                           'waning_crescent': 'Dernier croissant', 'waning_gibbous': 'Gibbeuse décroissante',
+                           'waxing_crescent': 'Premier croissant', 'waxing_gibbous': 'Gibbeuse croissante'} %}
+          {% set phase = states('sensor.moon_phase') %}
+          {{ phases[phase] if phase in phases.keys() else 'Error' }}
+        picture: /local/moon_phases/{{ states('sensor.moon_phase') }}.png
+  - trigger:
+      - trigger: event
+        event_type: bubble_card_update_modules
+    sensor:
+      - name: "Bubble Card Modules"
+        state: "saved"
+        icon: "mdi:puzzle"
+        attributes:
+          modules: "{{ trigger.event.data.modules }}"
+          last_updated: "{{ trigger.event.data.last_updated }}"
+
+# ── Compteurs énergie ────────────────────────────────────────────
+utility_meter:
+  chauffage_monthly:
+    source: sensor.chauffage_climatecontrol_heating_yearly_electrical_consumption
+    cycle: monthly
+  ballon_monthly:
+    source: sensor.chauffage_domestichotwatertank_heating_yearly_electrical_consumption
+    cycle: monthly
+
+# ── Intégrations ─────────────────────────────────────────────────
+hass_cozylife_local_pull:
+  lang: en
+  ip:
+    - "<CHANGE_ME_COZYLIFE_IP>"
+
+# ── Notifications ────────────────────────────────────────────────
+notify:
+  - name: free_mobile
+    platform: free_mobile
+    username: !secret free_mobile_username
+    access_token: !secret free_mobile_token
+
+rest_command:
+  ntfy_homeassistant:
+    url: "https://ntfy.<CHANGE_ME_DOMAIN>/homeassistant"
+    method: POST
+    headers:
+      Authorization: !secret ntfy_ha_token
+      Title: "{{ title }}"
+      Priority: "{{ priority | default('3') }}"
+      Tags: "{{ tags | default('house') }}"
+      Markdown: "yes"
+    content_type: "text/plain"
+    payload: "{{ message }}"

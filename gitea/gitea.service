@@ -1,0 +1,24 @@
+[Unit]
+Description=Gitea (Git with a cup of tea)
+Documentation=https://docs.gitea.com/
+After=network.target mnt-nas-gitea.mount
+Requires=mnt-nas-gitea.mount
+
+[Service]
+Type=simple
+User=gitea
+Group=gitea
+WorkingDirectory=/mnt/nas/gitea/gitea
+ExecStart=/usr/local/bin/gitea web --config /mnt/nas/gitea/gitea/conf/app.ini
+Restart=on-failure
+RestartSec=10
+Environment=USER=gitea HOME=/home/gitea GITEA_WORK_DIR=/mnt/nas/gitea/gitea
+
+# Hardening
+ProtectSystem=full
+PrivateDevices=true
+NoNewPrivileges=true
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

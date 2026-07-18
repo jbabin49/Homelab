@@ -1,0 +1,61 @@
+﻿---
+server:
+  address: 'tcp://0.0.0.0:9091'
+log:
+  level: info
+theme: dark
+totp:
+  issuer: homelab
+  period: 30
+  digits: 6
+identity_validation:
+  reset_password:
+    jwt_secret: ********************
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2id
+      iterations: 3
+      memory: 65536
+      parallelism: 4
+      salt_length: 16
+      key_length: 32
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'auth.home.lab'
+      policy: bypass
+    - domain: '*.home.lab'
+      policy: two_factor
+session:
+  name: authelia_session
+  secret: *****************
+  expiration: 3600
+  inactivity: 300
+  remember_me: 2592000
+  cookies:
+    - domain: 'home.lab'
+      authelia_url: 'https://auth.home.lab'
+      default_redirection_url: 'https://home.lab'
+  redis:
+    host: authelia-redis
+    port: 6379
+regulation:
+  max_retries: 3
+  find_time: 120
+  ban_time: 300
+storage:
+  encryption_key: *******************
+  local:
+    path: /config/db.sqlite3
+notifier:
+  smtp:
+    address: 'smtp://smtp-relay.brevo.com:587'
+    username: example@smtp-brevo.com
+    password: *********************
+    sender: 'authelia@example.com'
+    subject: "[Homelab] {title}"
+    startup_check_address: test@authelia.com
+    tls:
+      skip_verify: false

@@ -1,0 +1,27 @@
+# Grafana — Datasource provisionning pour TimescaleDB (Zabbix)
+# Documentation : https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources
+#
+# Copier ce fichier en timescaledb.yml et adapter les valeurs.
+# Le fichier réel est monté dans le conteneur Grafana via le volume
+# grafana-provisioning:/etc/grafana/provisioning
+
+apiVersion: 1
+
+datasources:
+  - name: Zabbix TimescaleDB
+    type: postgres
+    access: proxy
+    url: zabbix-postgres:5432
+    database: zabbix
+    user: zabbix
+    secureJsonData:
+      password: CHANGE_ME_DB_PASSWORD
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 5
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+      postgresVersion: 1600    # PostgreSQL 16
+      timescaledb: true
+    isDefault: false
+    editable: true

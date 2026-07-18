@@ -1,0 +1,12 @@
+[Unit]
+Description=NFS mount for Gitea data on NAS OMV
+Documentation=https://www.freedesktop.org/software/systemd/man/systemd.mount.html
+
+[Mount]
+What=192.168.1.10:/export/gitea
+Where=/mnt/nas/gitea
+Type=nfs
+Options=_netdev,noatime,nofail,soft,timeo=30
+
+[Install]
+WantedBy=multi-user.target
